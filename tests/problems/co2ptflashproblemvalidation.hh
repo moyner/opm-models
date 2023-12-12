@@ -159,14 +159,14 @@ struct SimulationName<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct EndTime<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 60. * 60.;
+    static constexpr type value = 6.19065504e8;
 };
 
 // convergence control
 template <class TypeTag>
 struct InitialTimeStepSize<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 0.1 * 60. * 60.;
+    static constexpr type value = 864.0;
 };
 
 template <class TypeTag>
@@ -239,7 +239,7 @@ struct VtkWriteEquilibriumConstants<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct EpisodeLength<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 0.1 * 60. * 60.;
+    static constexpr type value = 1.296e6;
 };
 
 // mesh grid
@@ -254,7 +254,7 @@ struct Vanguard<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct DomainSizeX<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 300; // meter
+    static constexpr type value = 1000; // meter
 };
 
 template <class TypeTag>
@@ -267,11 +267,11 @@ struct DomainSizeY<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct DomainSizeZ<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 1.0;
+    static constexpr type value = 0.1;
 };
 
 template<class TypeTag>
-struct CellsX<TypeTag, TTag::CO2PTBaseProblem> { static constexpr int value = 30; };
+struct CellsX<TypeTag, TTag::CO2PTBaseProblem> { static constexpr int value = 1000; };
 template<class TypeTag>
 struct CellsY<TypeTag, TTag::CO2PTBaseProblem> { static constexpr int value = 1; };
 // CellsZ is not needed, while to keep structuredgridvanguard.hh compile
@@ -354,7 +354,7 @@ public:
         temperature_ = EWOMS_GET_PARAM(TypeTag, Scalar, Temperature);
         K_ = this->toDimMatrix_(9.869232667160131e-14);
 
-        porosity_ = 0.1;
+        porosity_ = 0.25;
     }
 
     template <class Context>
@@ -492,7 +492,7 @@ public:
         int inj = 0;
         int prod = EWOMS_GET_PARAM(TypeTag, unsigned, CellsX) - 1;
         if (spatialIdx == inj || spatialIdx == prod) {
-            return 1.0;
+            return 1000.0;
         } else {
             return porosity_;
         }
@@ -536,7 +536,10 @@ private:
     template <class FluidState, class Context>
     void initialFluidState(FluidState& fs, const Context& context, unsigned spaceIdx, unsigned timeIdx) const
     {
-        // z0 = [0.5, 0.3, 0.2]
+        // 1000*0.6 -- DECANE
+        // 1000*0.1 -- CO2
+        // 1000*0.3 -- METHANE
+        // z0 = [0.1, 0.3, 0.6]
         // zi = [0.99, 0.01-1e-3, 1e-3]
         // p0 = 75e5
         // T0 = 423.25
@@ -558,13 +561,11 @@ private:
 
         Scalar p0 = EWOMS_GET_PARAM(TypeTag, Scalar, Initialpressure);
 
-        //\Note, for an AD variable, if we multiply it with 2, the derivative will also be scalced with 2,
-        //\Note, so we should not do it.
         if (spatialIdx == inj) {
-            p0 *= 2.0;
+            p0 = 100.0e5;
         }
         if (spatialIdx == prod) {
-            p0 *= 0.5;
+            p0 = 50e5;
         }
         Evaluation p_init = Evaluation::createVariable(p0, 0);
 
