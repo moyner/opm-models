@@ -159,14 +159,21 @@ struct SimulationName<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct EndTime<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 6.48e8;
+    static constexpr type value = 1.296e8;
+};
+
+// this is kinds of telling the report step length
+template <class TypeTag>
+struct EpisodeLength<TypeTag, TTag::CO2PTBaseProblem> {
+    using type = GetPropType<TypeTag, Scalar>;
+    static constexpr type value = 21600.0;
 };
 
 // convergence control
 template <class TypeTag>
 struct InitialTimeStepSize<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 864.0;
+    static constexpr type value = 21600.0;
 };
 
 template <class TypeTag>
@@ -233,13 +240,6 @@ struct VtkWriteLiquidMoleFractions<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct VtkWriteEquilibriumConstants<TypeTag, TTag::CO2PTBaseProblem> {
     static constexpr bool value = true;
-};
-
-// this is kinds of telling the report step length
-template <class TypeTag>
-struct EpisodeLength<TypeTag, TTag::CO2PTBaseProblem> {
-    using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 1.296e6;
 };
 
 // mesh grid

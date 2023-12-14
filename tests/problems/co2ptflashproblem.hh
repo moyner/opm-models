@@ -211,6 +211,16 @@ struct VtkWriteViscosities<TypeTag, TTag::CO2PTBaseProblem> {
 };
 
 template <class TypeTag>
+struct VtkWritePorosity<TypeTag, TTag::CO2PTBaseProblem> {
+    static constexpr bool value = true;
+};
+
+template <class TypeTag>
+struct VtkWriteIntrinsicPermeabilities<TypeTag, TTag::CO2PTBaseProblem> {
+    static constexpr bool value = true;
+};
+
+template <class TypeTag>
 struct VtkWriteMobilities<TypeTag, TTag::CO2PTBaseProblem> {
     static constexpr bool value = true;
 };
