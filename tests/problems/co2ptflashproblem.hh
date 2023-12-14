@@ -206,6 +206,16 @@ struct VtkWriteFilterVelocities<TypeTag, TTag::CO2PTBaseProblem> {
 };
 
 template <class TypeTag>
+struct VtkWriteViscosities<TypeTag, TTag::CO2PTBaseProblem> {
+    static constexpr bool value = true;
+};
+
+template <class TypeTag>
+struct VtkWriteMobilities<TypeTag, TTag::CO2PTBaseProblem> {
+    static constexpr bool value = true;
+};
+
+template <class TypeTag>
 struct VtkWritePotentialGradients<TypeTag, TTag::CO2PTBaseProblem> {
     static constexpr bool value = true;
 };

@@ -159,7 +159,7 @@ struct SimulationName<TypeTag, TTag::CO2PTBaseProblem> {
 template <class TypeTag>
 struct EndTime<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
-    static constexpr type value = 6.19065504e8;
+    static constexpr type value = 6.48e8;
 };
 
 // convergence control
@@ -248,9 +248,6 @@ struct Vanguard<TypeTag, TTag::CO2PTBaseProblem> {
     using type = Opm::StructuredGridVanguard<TypeTag>;
 };
 
-//\Note: from the Julia code, the problem is a 1D problem with 3X1 cell.
-//\Note: DomainSizeX is 3.0 meters
-//\Note: DomainSizeY is 1.0 meters
 template <class TypeTag>
 struct DomainSizeX<TypeTag, TTag::CO2PTBaseProblem> {
     using type = GetPropType<TypeTag, Scalar>;
@@ -536,18 +533,17 @@ private:
     template <class FluidState, class Context>
     void initialFluidState(FluidState& fs, const Context& context, unsigned spaceIdx, unsigned timeIdx) const
     {
+        // input file order
         // 1000*0.6 -- DECANE
         // 1000*0.1 -- CO2
         // 1000*0.3 -- METHANE
-        // z0 = [0.1, 0.3, 0.6]
-        // zi = [0.99, 0.01-1e-3, 1e-3]
-        // p0 = 75e5
-        // T0 = 423.25
+        // opm order:
+        // CO2, C1, C10
         int inj = 0;
         int prod = EWOMS_GET_PARAM(TypeTag, unsigned, CellsX) - 1;
         int spatialIdx = context.globalSpaceIndex(spaceIdx, timeIdx);
         ComponentVector comp;
-        comp[0] = Evaluation::createVariable(0.5, 1);
+        comp[0] = Evaluation::createVariable(0.1, 1);
         comp[1] = Evaluation::createVariable(0.3, 2);
         comp[2] = 1. - comp[0] - comp[1];
         if (spatialIdx == inj) {
